@@ -5,7 +5,7 @@ export default function Footer() {
   return (
     <footer className="w-full border-t border-gray-200">
       <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="text-sm text-gray-700">© {new Date().getFullYear()} ChildRisk — For professionals</div>
+        <div className="text-sm text-gray-700">© {new Date().getFullYear()} Karlen</div>
 
         <div className="flex items-center gap-3">
           <a aria-label="GitHub" href="https://github.com/your-org" className="text-gray-600 hover:text-gray-900">

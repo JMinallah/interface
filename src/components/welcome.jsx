@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom'
 
 export default function Welcome() {
 	return (
-			<div className="min-h-screen flex flex-col">
+    		<div className="flex flex-col">
 
 				<main className="flex-1 flex items-center">
 				<section className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
 					<div className="space-y-4">
 						<h1 className="text-3xl sm:text-4xl md:text-4xl font-extrabold leading-tight" style={{color: 'var(--color-primary)'}}>
-							Welcome to EarlyMind
+							Welcome to Karlen
 						</h1>
 
 						<p className="text-gray-700 text-base sm:text-lg max-w-xl">
