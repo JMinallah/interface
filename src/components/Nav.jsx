@@ -73,25 +73,26 @@ export default function Nav() {
         </div>
 
         <nav className="hidden sm:flex items-center gap-2 text-sm">
-          <Link to="/" className="px-2 py-0.5 rounded-lg bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Home</Link>
+          <Link to="/" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Home</Link>
           {user ? (
             <>
-              <Link to="/dashboard" className="px-2 py-0.5 rounded-lg bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Dashboard</Link>
-              <button onClick={signOut} className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">
+              <Link to="/dashboard" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Dashboard</Link>
+              <Link to="/about" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">About</Link>
+              <button onClick={signOut} className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">
                 <LogOut size={14} /> Sign Out
               </button>
             </>
           ) : (
             <>
-              <Link to="/about" className="px-2 py-0.5 rounded-lg bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">About</Link>
-              <Link to="/signin" className="px-2 py-0.5 rounded-lg bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Sign In</Link>
-              <Link to="/register" className="px-2 py-0.5 rounded-lg bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Register</Link>
+              <Link to="/about" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">About</Link>
+              <Link to="/signin" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Sign In</Link>
+              <Link to="/register" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Register</Link>
             </>
           )}
         </nav>
 
         <div className="sm:hidden">
-          <button aria-controls="mobile-menu" aria-expanded={open} aria-label={open ? 'Close menu' : 'Open menu'} onClick={() => setOpen(v => !v)} className="p-1 rounded-md text-[color:var(--color-background)]">
+          <button aria-controls="mobile-menu" aria-expanded={open} aria-label={open ? 'Close menu' : 'Open menu'} onClick={() => setOpen(v => !v)} className="p-1 rounded-full text-[color:var(--color-background)]">
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>
         </div>
@@ -99,20 +100,21 @@ export default function Nav() {
 
       {open && (
         <div id="mobile-menu" ref={panelRef} className="sm:hidden absolute left-0 right-0 top-full z-50 border-t border-[rgba(0,0,0,0.06)] mobile-menu-enter" style={{backgroundColor: 'rgba(var(--color-accent-rgb),0.92)'}}>
-          <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2">
-            <Link ref={firstLinkRef} to="/" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-md bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Home</Link>
+            <div className="max-w-6xl mx-auto px-4 py-3 flex flex-col gap-2">
+            <Link ref={firstLinkRef} to="/" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Home</Link>
             {user ? (
               <>
-                <Link to="/dashboard" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-md bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Dashboard</Link>
-                <button onClick={() => { signOut(); setOpen(false) }} className="flex items-center gap-2 px-3 py-2 rounded-md bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium text-left">
+                <Link to="/dashboard" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Dashboard</Link>
+                <Link to="/about" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">About</Link>
+                <button onClick={() => { signOut(); setOpen(false) }} className="flex items-center gap-2 px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium text-left">
                   <LogOut size={14} /> Sign Out
                 </button>
               </>
             ) : (
               <>
-                <Link to="/about" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-md bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">About</Link>
-                <Link to="/signin" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-md bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Sign In</Link>
-                <Link ref={lastLinkRef} to="/register" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-md bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Register</Link>
+                <Link to="/about" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">About</Link>
+                <Link to="/signin" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Sign In</Link>
+                <Link ref={lastLinkRef} to="/register" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Register</Link>
               </>
             )}
           </div>
