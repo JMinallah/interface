@@ -1,0 +1,277 @@
+import React, { useState, useEffect } from "react";
+import { predict, getHealth, getInfo } from "../utils/api";
+
+/**
+ * Simple React component that:
+ * - Calls /predict with narrative + optional age
+ * - Displays response, recommendations, and model predictions
+ * - Provides intervention actions (example: "Refer to clinician", "Save record")
+ *
+ * Drop into a page (e.g., App.jsx) and ensure REACT_APP_API_BASE is set
+ */
+
+export default function TraumaAssessment() {
+  const [narrative, setNarrative] = useState("");
+  const [age, setAge] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
+  const [health, setHealth] = useState(null);
+  const [info, setInfo] = useState(null);
+
+  const BASE = process.env.REACT_APP_API_BASE || "";
+
+  useEffect(() => {
+    // Fetch health and system info at mount
+    async function fetchStatus() {
+      try {
+        const h = await getHealth(BASE);
+        setHealth(h);
+      } catch (e) {
+        setHealth(null);
+      }
+      try {
+        const i = await getInfo(BASE);
+        setInfo(i);
+      } catch (e) {
+        setInfo(null);
+      }
+    }
+    fetchStatus();
+  }, [BASE]);
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    setError(null);
+    setResult(null);
+
+    if (!narrative.trim()) {
+      setError("Narrative is required.");
+      return;
+    }
+
+    const payload = { narrative: narrative.trim() };
+    if (age !== "") payload.age = Number(age);
+
+    setLoading(true);
+    try {
+      const res = await predict(BASE, payload);
+      setResult(res);
+    } catch (err) {
+      setError(err.message || "Prediction failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Example intervention handlers — adapt to your workflow
+  function handleReferToClinician() {
+    // e.g., open modal, POST to your records service, or navigate to referral page
+    alert("Refer to clinician: create referral record in your system.");
+  }
+
+  function handleSaveRecord() {
+    // e.g., store the narrative + response to backend DB/service
+    alert("Save record: implement persistence in your backend.");
+  }
+
+  return (
+    <div style={{ maxWidth: 900, margin: "0 auto", padding: 20 }}>
+      <h2>Child Trauma Assessment</h2>
+
+      <div style={{ marginBottom: 12 }}>
+        <strong>API status:</strong>{" "}
+        {health ? (
+          <span>
+            {health.status || "unknown"} — models_loaded: {String(health.models_loaded)}
+          </span>
+        ) : (
+          <span>Unavailable</span>
+        )}
+      </div>
+
+      <form onSubmit={onSubmit}>
+        <div style={{ marginBottom: 10 }}>
+          <label>
+            Narrative (required)
+            <br />
+            <textarea
+              rows={6}
+              value={narrative}
+              onChange={(e) => setNarrative(e.target.value)}
+              style={{ width: "100%" }}
+              required
+            />
+          </label>
+        </div>
+
+        <div style={{ marginBottom: 10 }}>
+          <label>
+            Age (optional)
+            <br />
+            <input
+              type="number"
+              min="1"
+              max="18"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+            />
+          </label>
+        </div>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Analyzing..." : "Assess Trauma Risk"}
+        </button>
+      </form>
+
+      {error && <div style={{ marginTop: 12, color: "red" }}>{error}</div>}
+
+      {result && (
+        <div style={{ marginTop: 20, borderLeft: "4px solid #3498db", padding: 12 }}>
+          {!result.success ? (
+            <>
+              <h4>Assessment Failed</h4>
+              <div>{result.error || "Unknown error"}</div>
+            </>
+          ) : (
+            <>
+              <h4>Assessment Results</h4>
+              <div><strong>Risk:</strong> {result.risk_level}</div>
+              <div><strong>Probability:</strong> {(result.probability * 100).toFixed(1)}%</div>
+              <div><strong>Confidence:</strong> {(result.confidence * 100).toFixed(1)}%</div>
+
+              <div style={{ marginTop: 10 }}>
+                <strong>Recommendations</strong>
+                <ul>
+                  {result.recommendations.map((rec, idx) => (
+                    <li key={idx}>{rec}</li>
+                  ))}
+                </ul>
+              </div>
+
+              {result.model_predictions && Object.keys(result.model_predictions).length > 0 && (
+                <div style={{ marginTop: 10 }}>
+                  <strong>Model Predictions:</strong>
+                  <pre style={{ background: "#f7f7f7", padding: 8 }}>
+                    {JSON.stringify(result.model_predictions, null, 2)}
+                  </pre>
+                </div>
+              )}
+
+              <div style={{ marginTop: 12 }}>
+                <strong>Interventions</strong>
+                <div style={{ marginTop: 8 }}>
+                  <button onClick={handleReferToClinician}>Refer to clinician</button>{" "}
+                  <button onClick={handleSaveRecord}>Save record</button>
+                </div>
+                <small style={{ display: "block", marginTop: 8, color: "#555" }}>
+                  Tip: Wire these buttons to your own backend to persist referrals or trigger workflows.
+                </small>
+              </div>
+
+              {result.processing_details && (
+                <details style={{ marginTop: 12 }}>
+                  <summary>Processing details</summary>
+                  <pre style={{ background: "#f9f9f9", padding: 8 }}>
+                    {JSON.stringify(result.processing_details, null, 2)}
+                  </pre>
+                </details>
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {info && (
+        <div style={{ marginTop: 12, color: "#666", fontSize: 13 }}>
+          <div>Service: {info.service}</div>
+          <div>Version: {info.version}</div>
+          <div>Models loaded: {String(info.models_loaded)}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+/**
+ * Lightweight API helper for the FastAPI backend
+ * Uses fetch for minimal dependency footprint; replace with axios if preferred.
+ */
+
+export async function predict(base, payload) {
+  const url = `${base}/predict`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    // Try to extract JSON error, otherwise throw text
+    let text = await res.text();
+    try {
+      const j = JSON.parse(text);
+      const detail = j.detail || j.error || JSON.stringify(j);
+      throw new Error(`API ${res.status}: ${detail}`);
+    } catch (_) {
+      throw new Error(`API ${res.status}: ${text}`);
+    }
+  }
+  return res.json();
+}
+
+export async function getHealth(base) {
+  const url = `${base}/health`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Health check failed: ${res.status}`);
+  return res.json();
+}
+
+export async function getInfo(base) {
+  const url = `${base}/api/info`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Info fetch failed: ${res.status}`);
+  return res.json();
+}
+```markdown
+# React integration for Child Trauma Assessment API
+
+This small integration shows what to include in your React app to call the FastAPI service (child-trauma-assessment-model) for predictions and interventions.
+
+Files to add
+- src/components/TraumaAssessment.jsx  — UI component with form, result rendering, and simple intervention actions.
+- src/utils/api.js                   — fetch wrappers for /predict, /health, /api/info.
+- Set environment variable: REACT_APP_API_BASE (e.g., http://localhost:8000 or https://api.example.com)
+
+How to use
+1. Add files into your React project.
+2. Set API base URL in .env (REACT_APP_API_BASE=http://localhost:8000).
+3. Import and render the component, e.g.:
+   import TraumaAssessment from './components/TraumaAssessment';
+   ...
+   <TraumaAssessment />
+
+Local backend
+- Run the FastAPI server from the other repo:
+  uvicorn src.web.app:app --host 0.0.0.0 --port 8000
+- Or use the repo Dockerfile to run the container (it starts uvicorn).
+
+Important notes
+- CORS: the FastAPI app uses CORSMiddleware with allow_origins=["*"]. For production, configure allowed origins.
+- Demo mode: If trained models are not present, API returns demo/simulated responses. Check /health (models_loaded flag) and /api/info for model status.
+- Security & privacy:
+  - Never send personally-identifying information (PII) in production without proper safeguards and approvals.
+  - Use HTTPS in production.
+  - Add authentication and access control (API key or OAuth) before exposing the service publicly.
+- Interventions:
+  - The component includes placeholder buttons for actions like "Refer to clinician" and "Save record". Implement actual persistence, audit logging, and workflows in your own backend.
+  - Add confirmation steps and sensitive-data handling for actions that create referrals or contact authorities.
+
+Testing
+- Test backend with curl:
+  curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" -d '{"narrative":"I am scared when my parent yells","age":9}'
+- Confirm UI connectivity by running React app and submitting the form.
+
+Compliance & Ethics
+- Evaluate clinical and legal requirements before using the tool in production.
+- Keep logs, consent records, and human-in-the-loop review for any high-risk interventions.
+
+```

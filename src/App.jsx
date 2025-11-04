@@ -7,7 +7,6 @@ import Footer from './components/Footer'
 import ProtectedRoute from './components/ProtectedRoute'
 import { AuthProvider } from './contexts/AuthContext'
 
-import About from './pages/About'
 import SignIn from './pages/SignIn'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
@@ -27,7 +26,6 @@ function App() {
                   <Dashboard />
                 </ProtectedRoute>
               } />
-              <Route path="/about" element={<About />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/register" element={<Register />} />
             </Routes>

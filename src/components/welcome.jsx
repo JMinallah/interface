@@ -55,7 +55,6 @@ export default function Welcome() {
 									) : (
 										<Link to="/signin" className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-[color:var(--color-primary)] text-white font-semibold shadow-sm hover:brightness-95">Get started</Link>
 									)}
-									<Link to="/about" className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-gray-200 text-gray-700">Learn more</Link>
 								</div>
 
 						</div>

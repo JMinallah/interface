@@ -77,14 +77,12 @@ export default function Nav() {
           {user ? (
             <>
               <Link to="/dashboard" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Dashboard</Link>
-              <Link to="/about" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">About</Link>
               <button onClick={signOut} className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">
                 <LogOut size={14} /> Sign Out
               </button>
             </>
           ) : (
             <>
-              <Link to="/about" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">About</Link>
               <Link to="/signin" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Sign In</Link>
               <Link to="/register" className="px-2 py-0.5 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium hover:scale-105 transition-transform">Register</Link>
             </>
@@ -105,14 +103,12 @@ export default function Nav() {
             {user ? (
               <>
                 <Link to="/dashboard" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Dashboard</Link>
-                <Link to="/about" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">About</Link>
                 <button onClick={() => { signOut(); setOpen(false) }} className="flex items-center gap-2 px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium text-left">
                   <LogOut size={14} /> Sign Out
                 </button>
               </>
             ) : (
               <>
-                <Link to="/about" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">About</Link>
                 <Link to="/signin" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Sign In</Link>
                 <Link ref={lastLinkRef} to="/register" onClick={() => setOpen(false)} className="block px-3 py-2 rounded-full bg-[color:var(--color-background)] text-[color:var(--color-accent)] font-medium">Register</Link>
               </>
